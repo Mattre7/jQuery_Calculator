@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <title>jQuery Calculator</title>
 
+    <!-- Added link to the jQuery Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Added a link to Bootstrap-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
 </head>
 <body>
 
+<!-- Jumbotron for Title -->
 <div class="jumbotron">
     <h1 class="text-center">jQuery Calculator</h1>
     <h3 class="text-center">Perform basic mathematic operations using the power of jQuery!</h3>
@@ -19,6 +23,7 @@
 
     <div class="row">
 
+      <!-- Calculator Panel -->
       <div class="col-lg-4">
         <div class="card">
           <h3 class="card-header">Calculator</h3>
@@ -49,7 +54,7 @@
         </div>
       </div>
 
-
+      <!-- Result Panel -->
       <div class="col-lg-6">
         <div class="card">
           <h3 class="card-header">Result</h3>
@@ -67,80 +72,102 @@
 
 <script type="text/javascript">
 
-$(document).ready(function() {
+  $(document).ready(function() {
 
-var firstNumber = ""
-var secondNumber = ""
-var operator;
-var result = ""
-var isOperatorChosen = false;
-var isCalculated = false;
+    //write event handlers for each button
 
-initializeCalculator = function() {
-  var firstNumber = ""
-  var secondNumber = ""
-  var operator;
-  var result = ""
-  var isOperatorChosen = false;
-  var isCalculated = false;
-}
+    //clicking number buttons will store the number to a variable
+    //the numbers will continue being stored to the same variale 
+    //until an operator key is pressed
 
-$(".number").click(function(event){
-  if (isCalculated) {
-    return false;
-  }
-  if (isOperatorChosen) { 
-    secondNumber += $(this).val();
-    $("#second-number").text(secondNumber)
-  }
-  else {
-    firstNumber += $(this).val();
-    $("#first-number").text(firstNumber)
-  }
-})
+    var firstNumber = '';
+    var secondNumber = '';
+    var operator;
+    var result = null;
+    var operatorClicked = null;
+    var equalClicked = null;
 
-$(".operator").click(function(event){
-  if (!firstNumber || isCalculated) {
-    return false;
-  }
-  isOperatorChosen=true
-  operator = $((this).val());
-  $(".operator").text($(this).text());
-})
+    $(".number").on('click', function() {
+      if (result === null) {
+        if (operatorClicked) {
+          secondNumber += $(this).val();
+          $("#second-number").text(secondNumber);
+        }
+        else {
+          firstNumber +=  $(this).val();
+          $("#first-number").text(firstNumber);
+        }
+      }
+    });
 
-$(".equal").on("click", function () {
-  if (isCalculated) {
-    return false;
-  }
-  isCalculated = true;
+    $(".operator").on('click', function() {
+      if (!operatorClicked) {
+        if (firstNumber !== '') {
+          firstNumber = parseInt(firstNumber);
+          operator = $(this).val();
+          operatorClicked = true;
+          if (operator === 'plus') {
+            $("#operator").text("+");
+          }
+          else if (operator === 'minus') {
+            $("#operator").text("-");
+          }
+          else if (operator === 'times') {
+            $("#operator").text("*");
+          }
+          else if (operator === 'divide') {
+            $("#operator").text("/");
+          }
+          else if (operator === 'power') {
+            $("#operator").text("^");
+          }
+        console.log(operator);
+        }
+      }
+    });
 
-  console.log(typeof firstNumber);
-  firstNumber(parseInt(firstNumber));
-  secondNumber(parseInt(secondNumber));
+    $(".equal").on('click', function() {
+      equalClicked = true;
+      if (firstNumber !== '' && secondNumber !== '') {
+        secondNumber = parseInt(secondNumber);
+        if (operator === 'plus') {
+          result = firstNumber + secondNumber;
+        }
+        else if (operator === 'minus') {
+          result = firstNumber - secondNumber;
+        }
+        else if (operator === 'times') {
+          result = firstNumber * secondNumber;
+        }
+        else if (operator === 'divide') {
+          if (secondNumber !== 0){
+            result = firstNumber / secondNumber;
+          }
+          else {
+            result = 'Divide by 0 error';
+          }
+        }
+        else if (operator === 'power') {
+          result = Math.pow(firstNumber, secondNumber);
+        }
+      }
 
-  if (operator === "plus") {
-    result = firstNumber+secondNumber
-  }
-  else if (operator === "minus") {
-    result = firstNumber-secondNumber
-  }
-  else if (operator === "multipy") {
-    result = firstNumber*secondNumber
-  }
-  else if (operator === "power") {
-    result = firstNumber^secondNumber
-  }
-  else if (operator === "divide") {
-    result = Math.pow(firstNumber, secondNumber)
-  }
-  $("#result").text(result)
-})
+      $("#result").text(result);
+    });
 
-$(".clear").on("click", function () {
-  initializeCalculator();
-})
-});
-
+    $(".clear").on('click', function() {
+      $("#result").text('');
+      $("#operator").text('');
+      $("#second-number").text('');
+      $("#first-number").text('');
+      firstNumber = '';
+      secondNumber = '';
+      operator = '';
+      result = null;
+      operatorClicked = null;
+      equalClicked = null;
+    });  
+  });
 </script>
 
 </body>
